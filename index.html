@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Plaza | Timeless Elegance</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@300;400;600&display=swap');
+
+        :root {
+            --gold: #c5a059;
+            --dark: #1a1a1a;
+            --light: #f8f8f8;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .gold-text { color: var(--gold); }
+        .gold-bg { background-color: var(--gold); }
+        
+        /* Placeholder styling: Visual guide for missing images */
+        img {
+            background-color: #e5e7eb;
+            position: relative;
+            min-height: 100px;
+            display: block;
+        }
+        img::after {
+            content: 'Insert: ' attr(alt);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 10px;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            text-align: center;
+            width: 80%;
+        }
+
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: var(--gold);
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .hero-gradient {
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6));
+        }
+
+        .page-transition {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: var(--gold);
+            border-radius: 10px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+        }
+    </style>
+</head>
+<body class="custom-scrollbar">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex flex-col cursor-pointer" onclick="showPage('home')">
+                <span class="text-2xl font-serif tracking-widest font-bold uppercase leading-tight">Plaza</span>
+                <span class="text-[10px] tracking-[0.3em] uppercase text-gray-500 -mt-1">Hotels & Resorts</span>
+            </div>
+            
+            <div class="hidden md:flex space-x-8 uppercase text-[11px] tracking-[0.2em] font-semibold">
+                <a href="#" onclick="showPage('home')" class="nav-link">Home</a>
+                <a href="#" onclick="showPage('rooms')" class="nav-link">Rooms</a>
+                <a href="#" onclick="showPage('dining')" class="nav-link">Dining</a>
+                <a href="#" onclick="showPage('amenities')" class="nav-link">Amenities</a>
+                <a href="#" onclick="showPage('contact')" class="nav-link">Contact</a>
+            </div>
+
+            <button onclick="openBooking()" class="hidden md:block gold-bg text-white px-7 py-2.5 text-[10px] tracking-[0.2em] font-bold hover:bg-black transition-colors duration-300">
+                BOOK YOUR STAY
+            </button>
+
+            <button class="md:hidden text-2xl" id="mobileMenuBtn">
+                <i class="fa-solid fa-bars-staggered"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="fixed inset-0 bg-white z-[60] flex flex-col items-center justify-center space-y-8 transform translate-x-full transition-transform duration-500">
+        <button onclick="toggleMobileMenu()" class="absolute top-8 right-8 text-3xl">&times;</button>
+        <a href="#" onclick="showPage('home'); toggleMobileMenu()" class="text-2xl font-serif">Home</a>
+        <a href="#" onclick="showPage('rooms'); toggleMobileMenu()" class="text-2xl font-serif">Rooms & Suites</a>
+        <a href="#" onclick="showPage('dining'); toggleMobileMenu()" class="text-2xl font-serif">Fine Dining</a>
+        <a href="#" onclick="showPage('amenities'); toggleMobileMenu()" class="text-2xl font-serif">Amenities</a>
+        <a href="#" onclick="showPage('contact'); toggleMobileMenu()" class="text-2xl font-serif">Contact</a>
+    </div>
+
+    <!-- Main Content Area -->
+    <main id="content-root">
+        <!-- Content dynamically injected here -->
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-[#111] text-white py-20 px-6 mt-10">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
+            <div class="col-span-1 md:col-span-2">
+                <h2 class="font-serif text-3xl mb-6">Hotel Plaza</h2>
+                <p class="text-gray-400 max-w-sm leading-relaxed mb-8 text-sm">
+                    A sanctuary of timeless elegance since 1924. Experience personalized service and sophisticated luxury in the heart of the metropolis.
+                </p>
+                <div class="flex space-x-6 text-xl">
+                    <a href="#" class="hover:text-[#c5a059] transition-colors"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="hover:text-[#c5a059] transition-colors"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="hover:text-[#c5a059] transition-colors"><i class="fa-brands fa-twitter"></i></a>
+                </div>
+            </div>
+            <div>
+                <h4 class="font-semibold mb-6 uppercase tracking-widest text-xs gold-text">Navigation</h4>
+                <ul class="space-y-4 text-gray-400 text-sm">
+                    <li><a href="#" onclick="showPage('home')" class="hover:text-white transition-colors">The Hotel</a></li>
+                    <li><a href="#" onclick="showPage('rooms')" class="hover:text-white transition-colors">Rooms & Suites</a></li>
+                    <li><a href="#" onclick="showPage('dining')" class="hover:text-white transition-colors">Dining & Bars</a></li>
+                    <li><a href="#" onclick="showPage('contact')" class="hover:text-white transition-colors">Location</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-semibold mb-6 uppercase tracking-widest text-xs gold-text">Contact</h4>
+                <p class="text-gray-400 text-sm leading-loose">
+                    45 Charabra<br>
+                    Kufri, SHIMLA 171012<br>
+                    Tele. Ph. : +91-708 1934 797<br>
+                    E-mail: reservations@hotelplaza.com
+                </p>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto border-t border-white/5 mt-16 pt-8 text-center text-[10px] text-gray-600 uppercase tracking-[0.3em]">
+            &copy; 2024 Hotel Plaza International. Managed by Plaza Luxury Group.
+        </div>
+    </footer>
+
+    <!-- Booking Modal -->
+    <div id="bookingModal" class="modal">
+        <div class="bg-white max-w-lg mx-auto mt-20 p-10 relative rounded-sm shadow-2xl">
+            <button onclick="closeBooking()" class="absolute top-4 right-4 text-2xl text-gray-300 hover:text-black transition-colors">&times;</button>
+            <h2 class="text-3xl font-serif mb-8 text-center">Make a Reservation</h2>
+            <form id="bookingForm" class="space-y-5">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase mb-2 tracking-widest">Arrival Date</label>
+                        <input type="date" class="w-full p-3 border border-gray-100 text-sm focus:border-gold outline-none" required>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase mb-2 tracking-widest">Departure Date</label>
+                        <input type="date" class="w-full p-3 border border-gray-100 text-sm focus:border-gold outline-none" required>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold uppercase mb-2 tracking-widest">Accommodations</label>
+                    <select class="w-full p-3 border border-gray-100 text-sm focus:border-gold outline-none bg-white">
+                        <option>Deluxe City View Room</option>
+                        <option>Executive Garden Suite</option>
+                        <option>Presidential Penthouse</option>
+                        <option>Royal Heritage Suite</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full gold-bg text-white py-4 font-bold tracking-[0.3em] hover:bg-black transition-all uppercase text-xs">Check Availability</button>
+            </form>
+            <div id="bookingMessage" class="hidden mt-6 p-4 bg-gray-50 text-gray-700 text-center text-xs tracking-wide border border-gray-100">
+                Inquiry sent. Our reservation team will contact you within 24 hours.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * IMAGE SYNTAX GUIDE:
+         * To add your photos, simply replace the 'src' value in the templates below.
+         * Example: src="images/hero.jpg" or src="https://yourdomain.com/photo.png"
+         */
+
+        const pages = {
+            home: `
+                <section class="relative h-screen flex items-center justify-center page-transition overflow-hidden">
+                    <img src="2.avif" class="absolute inset-0 w-full h-full object-cover scale-105" alt="Main Hero Background">
+                    <div class="absolute inset-0 hero-gradient"></div>
+                    <div class="relative text-center text-white px-6">
+                        <span class="text-[10px] tracking-[0.6em] uppercase mb-6 block font-semibold">The Landmark of Sophistication</span>
+                        <h1 class="text-5xl md:text-8xl mb-10 leading-tight">Timeless Luxury <br><span class="italic font-serif">Perfectly Defined</span></h1>
+                        <div class="flex flex-col md:flex-row justify-center gap-6">
+                            <button onclick="showPage('rooms')" class="border border-white/40 px-10 py-4 hover:bg-white hover:text-black transition-all tracking-[0.2em] text-[10px] font-bold uppercase">Explore Suites</button>
+                            <button onclick="openBooking()" class="gold-bg px-10 py-4 hover:bg-white hover:text-black transition-all tracking-[0.2em] text-[10px] font-bold uppercase">Book Your Stay</button>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="max-w-7xl mx-auto py-32 px-6 grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
+                    <div>
+                        <span class="gold-text text-xs font-bold tracking-[0.3em] uppercase mb-6 block">Our Heritage</span>
+                        <h2 class="text-4xl md:text-5xl mb-8 leading-[1.2]">A century of unparalleled <br>hospitality.</h2>
+                        <p class="text-gray-500 leading-relaxed mb-10 text-sm">
+                            Since its grand opening in 1924, Hotel Plaza has stood as a beacon of luxury and grace. Every corridor tells a story of the famous guests who have graced our halls, from royalty to the icons of the silver screen. Today, we continue that legacy with modern amenities wrapped in classic architectural grandeur.
+                        </p>
+                        <button class="text-[10px] font-bold border-b border-black pb-2 tracking-[0.2em] hover:text-[#c5a059] hover:border-[#c5a059] transition-all uppercase">Learn More About Us</button>
+                    </div>
+                    <div class="relative h-[600px]">
+                        <img src="3.webp" class="w-full h-full object-cover rounded-sm shadow-2xl" alt="Historic Hotel Interior">
+                        <div class="absolute -bottom-12 -left-12 bg-white p-10 hidden xl:block shadow-2xl max-w-sm border border-gray-50">
+                            <p class="font-serif italic text-xl text-gray-800 leading-relaxed">"The quintessential Shimla experience. Absolute perfection in every detail."</p>
+                            <span class="block mt-6 text-[10px] font-bold tracking-widest text-gray-400 uppercase">— Travel + Leisure</span>
+                        </div>
+                    </div>
+                </section>
+            `,
+            rooms: `
+                <section class="pt-40 pb-24 px-6 max-w-7xl mx-auto page-transition">
+                    <div class="text-center mb-20">
+                        <span class="gold-text text-xs font-bold tracking-[0.4em] uppercase mb-4 block">Residential Elegance</span>
+                        <h1 class="text-5xl mb-6">Suites & Collections</h1>
+                        <p class="text-gray-400 max-w-xl mx-auto text-sm leading-relaxed font-light">Each room is a masterclass in comfort, featuring hand-selected furnishings and bespoke artwork.</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                        <div class="group cursor-pointer">
+                            <div class="overflow-hidden relative h-[500px]">
+                                <img src="4.jpg" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" alt="Deluxe Room Interior">
+                                <div class="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-all"></div>
+                            </div>
+                            <div class="mt-8 border-l border-gray-100 pl-6">
+                                <h3 class="text-2xl mb-3">Deluxe City View</h3>
+                                <p class="text-[11px] text-gray-400 uppercase tracking-widest mb-4">450 SQ FT • SKYLINE VIEWS • MARBLE BATH</p>
+                                <span class="text-sm gold-text font-semibold tracking-widest">FROM ₹40,000 / NIGHT</span>
+                            </div>
+                        </div>
+                        <div class="group cursor-pointer">
+                            <div class="overflow-hidden relative h-[500px]">
+                                <img src="5.jpg" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" alt="Executive Suite Interior">
+                                <div class="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-all"></div>
+                            </div>
+                            <div class="mt-8 border-l border-gray-100 pl-6">
+                                <h3 class="text-2xl mb-3">Executive Grand Suite</h3>
+                                <p class="text-[11px] text-gray-400 uppercase tracking-widest mb-4">850 SQ FT • DINING AREA • BUTLER SERVICE</p>
+                                <span class="text-sm gold-text font-semibold tracking-widest">FROM ₹60,000 / NIGHT</span>
+                            </div>
+                        </div>
+                        <div class="group cursor-pointer">
+                            <div class="overflow-hidden relative h-[500px]">
+                                <img src="6.jpg" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" alt="Presidential Penthouse Interior">
+                                <div class="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-all"></div>
+                            </div>
+                            <div class="mt-8 border-l border-gray-100 pl-6">
+                                <h3 class="text-2xl mb-3">Presidential Penthouse</h3>
+                                <p class="text-[11px] text-gray-400 uppercase tracking-widest mb-4">2,200 SQ FT • ROOFTOP DECK • PRIVATE CHEF</p>
+                                <span class="text-sm gold-text font-semibold tracking-widest">FROM ₹90,000 / NIGHT</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            `,
+            dining: `
+                <section class="pt-40 pb-24 page-transition">
+                    <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
+                        <div class="order-2 md:order-1 h-[650px] relative">
+                             <img src="7.avif" class="w-full h-full object-cover shadow-2xl" alt="Fine Dining Venue">
+                             <div class="absolute -right-10 top-20 bg-black text-white p-8 hidden lg:block">
+                                <span class="block text-[10px] tracking-[0.4em] mb-2">RESERVATIONS</span>
+                                <p class="text-sm font-light">+91-704 5390 01</p>
+                             </div>
+                        </div>
+                        <div class="order-1 md:order-2">
+                            <span class="gold-text text-xs font-bold tracking-[0.4em] uppercase mb-6 block">Culinary Excellence</span>
+                            <h2 class="text-5xl mb-8 leading-tight font-serif">The Gilded Fork</h2>
+                            <p class="text-gray-500 leading-relaxed mb-8 italic text-lg">"A symphony of seasonal flavors and artistic presentation."</p>
+                            <p class="text-gray-500 mb-10 leading-relaxed text-sm">Under the direction of Michelin-starred Lucas Fernandes and Head Chef Paul Wilson, The Gilded Fork reimagines modern continental cuisine. From our signature tasting menus to our world-class wine cellar containing over 5,000 vintages, every moment is designed to delight the palate.</p>
+                            <div class="space-y-4 mb-10">
+                                <div class="flex items-center justify-between border-b border-gray-100 pb-2">
+                                    <span class="text-xs font-bold tracking-widest uppercase">Breakfast</span>
+                                    <span class="text-xs text-gray-400 uppercase">07:00 — 11:00</span>
+                                </div>
+                                <div class="flex items-center justify-between border-b border-gray-100 pb-2">
+                                    <span class="text-xs font-bold tracking-widest uppercase">Afternoon Tea</span>
+                                    <span class="text-xs text-gray-400 uppercase">14:00 — 17:00</span>
+                                </div>
+                                <div class="flex items-center justify-between border-b border-gray-100 pb-2">
+                                    <span class="text-xs font-bold tracking-widest uppercase">Dinner</span>
+                                    <span class="text-xs text-gray-400 uppercase">19:00 — 23:00</span>
+                                </div>
+                            </div>
+                            <button class="px-12 py-4 bg-black text-white text-[10px] tracking-[0.3em] font-bold uppercase hover:bg-[#c5a059] transition-all">Reserve Your Table</button>
+                        </div>
+                    </div>
+                </section>
+            `,
+            amenities: `
+                <section class="pt-40 pb-32 px-6 max-w-7xl mx-auto page-transition">
+                    <div class="text-center mb-20">
+                        <h2 class="text-5xl font-serif mb-6">Extraordinary Leisure</h2>
+                        <p class="text-gray-400 text-sm tracking-widest uppercase font-semibold">Curated experiences for the modern traveler</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                        <div class="group p-10 border border-gray-100 bg-white hover:bg-black hover:text-white transition-all duration-500 text-center">
+                            <i class="fa-solid fa-spa text-4xl gold-text mb-8 block"></i>
+                            <h4 class="text-xl mb-6 font-serif">Saphire Spa</h4>
+                            <p class="text-[13px] leading-relaxed opacity-70">Customized wellness treatments and hydrotherapy in a serene sanctuary.</p>
+                        </div>
+                        <div class="group p-10 border border-gray-100 bg-white hover:bg-black hover:text-white transition-all duration-500 text-center">
+                            <i class="fa-solid fa-water-ladder text-4xl gold-text mb-8 block"></i>
+                            <h4 class="text-xl mb-6 font-serif">Rooftop Pool</h4>
+                            <p class="text-[13px] leading-relaxed opacity-70">A heated infinity pool with a climate-controlled terrace and bar service.</p>
+                        </div>
+                        <div class="group p-10 border border-gray-100 bg-white hover:bg-black hover:text-white transition-all duration-500 text-center">
+                            <i class="fa-solid fa-dumbbell text-4xl gold-text mb-8 block"></i>
+                            <h4 class="text-xl mb-6 font-serif">The Studio</h4>
+                            <p class="text-[13px] leading-relaxed opacity-70">24-hour fitness center featuring Technogym equipment and yoga sessions.</p>
+                        </div>
+                        <div class="group p-10 border border-gray-100 bg-white hover:bg-black hover:text-white transition-all duration-500 text-center">
+                            <i class="fa-solid fa-car-side text-4xl gold-text mb-8 block"></i>
+                            <h4 class="text-xl mb-6 font-serif">Chauffeur</h4>
+                            <p class="text-[13px] leading-relaxed opacity-70">Complimentary house car service within a 5-mile radius of the hotel.</p>
+                        </div>
+                    </div>
+                    <div class="mt-20 relative h-[450px] overflow-hidden">
+                        <img src="8.webp" class="w-full h-full object-cover" alt="Spa and Wellness Center">
+                        <div class="absolute inset-0 bg-black/30 flex items-center justify-center">
+                             <button class="bg-white/10 backdrop-blur-md text-white border border-white/30 px-10 py-4 text-[10px] tracking-[0.3em] font-bold uppercase hover:bg-white hover:text-black transition-all">View Full Gallery</button>
+                        </div>
+                    </div>
+                </section>
+            `,
+            contact: `
+                <section class="pt-40 pb-24 px-6 max-w-7xl mx-auto page-transition">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-20">
+                        <div>
+                            <h2 class="text-5xl font-serif mb-8">Connect With Us</h2>
+                            <p class="text-gray-500 mb-12 leading-relaxed text-sm">Whether you have a question about our suites, need assistance with travel arrangements, or wish to organize a special event, our concierge team is available 24/7.</p>
+                            
+                            <div class="space-y-10">
+                                <div class="flex gap-6">
+                                    <div class="w-12 h-12 gold-bg flex items-center justify-center text-white text-xl">
+                                        <i class="fa-solid fa-location-dot"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="text-xs font-bold uppercase tracking-widest mb-1">Our Location</h5>
+                                        <p class="text-sm text-gray-500">45 Charabra, Kufri, SHIMLA 171012</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-6">
+                                    <div class="w-12 h-12 gold-bg flex items-center justify-center text-white text-xl">
+                                        <i class="fa-solid fa-phone"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="text-xs font-bold uppercase tracking-widest mb-1">Inquiries</h5>
+                                        <p class="text-sm text-gray-500">+91-708 1934 797</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <form class="bg-white p-12 shadow-sm border border-gray-50 space-y-8">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div class="flex flex-col border-b border-gray-100 pb-2">
+                                    <label class="text-[10px] uppercase font-bold tracking-widest mb-2 text-gray-400">Your Name</label>
+                                    <input type="text" class="outline-none py-1 text-sm bg-transparent" placeholder="John Doe">
+                                </div>
+                                <div class="flex flex-col border-b border-gray-100 pb-2">
+                                    <label class="text-[10px] uppercase font-bold tracking-widest mb-2 text-gray-400">Email Address</label>
+                                    <input type="email" class="outline-none py-1 text-sm bg-transparent" placeholder="email@domain.com">
+                                </div>
+                            </div>
+                            <div class="flex flex-col border-b border-gray-100 pb-2">
+                                <label class="text-[10px] uppercase font-bold tracking-widest mb-2 text-gray-400">Subject</label>
+                                <select class="outline-none py-1 text-sm bg-transparent">
+                                    <option>General Inquiry</option>
+                                    <option>Room Reservation</option>
+                                    <option>Dining Reservation</option>
+                                    <option>Events & Weddings</option>
+                                </select>
+                            </div>
+                            <div class="flex flex-col border-b border-gray-100 pb-2">
+                                <label class="text-[10px] uppercase font-bold tracking-widest mb-2 text-gray-400">Your Message</label>
+                                <textarea rows="4" class="outline-none py-1 text-sm bg-transparent resize-none" placeholder="Tell us how we can help..."></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-black text-white py-5 font-bold tracking-[0.3em] hover:bg-gold transition-all uppercase text-[10px]">Send Message</button>
+                        </form>
+                    </div>
+                </section>
+            `
+        };
+
+        // Navigation Management
+        function showPage(pageId) {
+            const root = document.getElementById('content-root');
+            root.innerHTML = pages[pageId] || pages.home;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Link state updates
+            document.querySelectorAll('.nav-link').forEach(link => {
+                const linkText = link.innerText.toLowerCase();
+                if(linkText.includes(pageId) || (pageId === 'home' && linkText === 'home')) {
+                    link.classList.add('gold-text');
+                } else {
+                    link.classList.remove('gold-text');
+                }
+            });
+        }
+
+        // UI Controls
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+
+        function toggleMobileMenu() {
+            mobileMenu.classList.toggle('translate-x-full');
+            mobileMenu.classList.toggle('translate-x-0');
+        }
+
+        mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+
+        const bookingModal = document.getElementById('bookingModal');
+        
+        function openBooking() {
+            bookingModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeBooking() {
+            bookingModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            document.getElementById('bookingMessage').classList.add('hidden');
+        }
+
+        window.onclick = (e) => { if (e.target == bookingModal) closeBooking(); }
+
+        document.getElementById('bookingForm').onsubmit = (e) => {
+            e.preventDefault();
+            document.getElementById('bookingMessage').classList.remove('hidden');
+            setTimeout(closeBooking, 2500);
+        }
+
+        // Launch
+        window.onload = () => showPage('home');
+    </script>
+</body>
+</html>
