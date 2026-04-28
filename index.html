@@ -22,14 +22,13 @@
             overflow-x: hidden;
         }
 
-        h1, h2, h3, .font-serif {
+        h1, h2, h3, h4, .font-serif {
             font-family: 'Playfair Display', serif;
         }
 
         .gold-text { color: var(--gold); }
         .gold-bg { background-color: var(--gold); }
         
-        /* Placeholder styling: Visual guide for missing images */
         img {
             background-color: #e5e7eb;
             position: relative;
@@ -37,7 +36,7 @@
             display: block;
         }
         img::after {
-            content: 'Insert: ' attr(alt);
+            content: 'Photo: ' attr(alt);
             position: absolute;
             top: 50%;
             left: 50%;
@@ -99,6 +98,7 @@
             height: 100%;
             background-color: rgba(0,0,0,0.8);
             backdrop-filter: blur(5px);
+            overflow-y: auto;
         }
     </style>
 </head>
@@ -185,7 +185,7 @@
 
     <!-- Booking Modal -->
     <div id="bookingModal" class="modal">
-        <div class="bg-white max-w-lg mx-auto mt-20 p-10 relative rounded-sm shadow-2xl">
+        <div class="bg-white max-w-lg mx-auto my-20 p-10 relative rounded-sm shadow-2xl">
             <button onclick="closeBooking()" class="absolute top-4 right-4 text-2xl text-gray-300 hover:text-black transition-colors">&times;</button>
             <h2 class="text-3xl font-serif mb-8 text-center">Make a Reservation</h2>
             <form id="bookingForm" class="space-y-5">
@@ -203,9 +203,11 @@
                     <label class="block text-[10px] font-bold uppercase mb-2 tracking-widest">Accommodations</label>
                     <select class="w-full p-3 border border-gray-100 text-sm focus:border-gold outline-none bg-white">
                         <option>Deluxe City View Room</option>
-                        <option>Executive Garden Suite</option>
+                        <option>Executive Grand Suite</option>
                         <option>Presidential Penthouse</option>
                         <option>Royal Heritage Suite</option>
+                        <option>Terrace Garden View</option>
+                        <option>Junior Club Suite</option>
                     </select>
                 </div>
                 <button type="submit" class="w-full gold-bg text-white py-4 font-bold tracking-[0.3em] hover:bg-black transition-all uppercase text-xs">Check Availability</button>
@@ -216,13 +218,61 @@
         </div>
     </div>
 
-    <script>
-        /**
-         * IMAGE SYNTAX GUIDE:
-         * To add your photos, simply replace the 'src' value in the templates below.
-         * Example: src="images/hero.jpg" or src="https://yourdomain.com/photo.png"
-         */
+    <!-- Dining Reservation Modal (Popup) -->
+    <div id="diningModal" class="modal">
+        <div class="bg-white max-w-lg mx-auto my-20 p-10 relative rounded-sm shadow-2xl">
+            <button onclick="closeDiningBooking()" class="absolute top-4 right-4 text-2xl text-gray-300 hover:text-black transition-colors">&times;</button>
+            <h2 class="text-3xl font-serif mb-2 text-center">The Gilded Fork</h2>
+            <p class="text-[10px] tracking-[0.3em] text-center uppercase text-gray-400 mb-8 font-bold">Reserve Your Table</p>
+            
+            <form id="diningForm" class="space-y-5">
+                <div>
+                    <label class="block text-[10px] font-bold uppercase mb-2 tracking-widest">Guest Name</label>
+                    <input type="text" placeholder="Your full name" class="w-full p-3 border border-gray-100 text-sm focus:border-gold outline-none" required>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase mb-2 tracking-widest">Room No.</label>
+                        <input type="text" placeholder="e.g. 402 or 'External'" class="w-full p-3 border border-gray-100 text-sm focus:border-gold outline-none" required>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase mb-2 tracking-widest">Contact No.</label>
+                        <input type="tel" placeholder="+91..." class="w-full p-3 border border-gray-100 text-sm focus:border-gold outline-none" required>
+                    </div>
+                </div>
 
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase mb-2 tracking-widest">Date</label>
+                        <input type="date" class="w-full p-3 border border-gray-100 text-sm focus:border-gold outline-none" required>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase mb-2 tracking-widest">Timing (24H)</label>
+                        <input type="time" class="w-full p-3 border border-gray-100 text-sm focus:border-gold outline-none" step="900" required>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-bold uppercase mb-2 tracking-widest">Number of Guests</label>
+                    <select class="w-full p-3 border border-gray-100 text-sm focus:border-gold outline-none bg-white">
+                        <option>2 People</option>
+                        <option>4 People</option>
+                        <option>6 People</option>
+                        <option>Large Party (8+)</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="w-full bg-black text-white py-4 font-bold tracking-[0.3em] hover:bg-[#c5a059] transition-all uppercase text-xs">Confirm Table Inquiry</button>
+            </form>
+            
+            <div id="diningMessage" class="hidden mt-6 p-4 bg-green-50 text-green-700 text-center text-xs tracking-wide border border-green-100">
+                <i class="fa-solid fa-circle-check mr-2"></i> Table reservation request sent.
+            </div>
+        </div>
+    </div>
+
+    <script>
         const pages = {
             home: `
                 <section class="relative h-screen flex items-center justify-center page-transition overflow-hidden">
@@ -261,41 +311,68 @@
                     <div class="text-center mb-20">
                         <span class="gold-text text-xs font-bold tracking-[0.4em] uppercase mb-4 block">Residential Elegance</span>
                         <h1 class="text-5xl mb-6">Suites & Collections</h1>
-                        <p class="text-gray-400 max-w-xl mx-auto text-sm leading-relaxed font-light">Each room is a masterclass in comfort, featuring hand-selected furnishings and bespoke artwork.</p>
                     </div>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                         <div class="group cursor-pointer">
-                            <div class="overflow-hidden relative h-[500px]">
-                                <img src="4.jpg" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" alt="Deluxe Room Interior">
-                                <div class="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-all"></div>
+                            <div class="overflow-hidden relative h-[450px]">
+                                <img src="4.jpg" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" alt="Deluxe Room">
                             </div>
                             <div class="mt-8 border-l border-gray-100 pl-6">
                                 <h3 class="text-2xl mb-3">Deluxe City View</h3>
-                                <p class="text-[11px] text-gray-400 uppercase tracking-widest mb-4">450 SQ FT • SKYLINE VIEWS • MARBLE BATH</p>
+                                <p class="text-[11px] text-gray-400 uppercase tracking-widest mb-4">450 SQ FT • SKYLINE VIEWS</p>
                                 <span class="text-sm gold-text font-semibold tracking-widest">FROM ₹40,000 / NIGHT</span>
                             </div>
                         </div>
                         <div class="group cursor-pointer">
-                            <div class="overflow-hidden relative h-[500px]">
-                                <img src="5.jpg" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" alt="Executive Suite Interior">
-                                <div class="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-all"></div>
+                            <div class="overflow-hidden relative h-[450px]">
+                                <img src="5.jpg" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" alt="Executive Suite">
                             </div>
                             <div class="mt-8 border-l border-gray-100 pl-6">
                                 <h3 class="text-2xl mb-3">Executive Grand Suite</h3>
-                                <p class="text-[11px] text-gray-400 uppercase tracking-widest mb-4">850 SQ FT • DINING AREA • BUTLER SERVICE</p>
+                                <p class="text-[11px] text-gray-400 uppercase tracking-widest mb-4">850 SQ FT • BUTLER SERVICE</p>
                                 <span class="text-sm gold-text font-semibold tracking-widest">FROM ₹60,000 / NIGHT</span>
                             </div>
                         </div>
                         <div class="group cursor-pointer">
-                            <div class="overflow-hidden relative h-[500px]">
-                                <img src="6.jpg" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" alt="Presidential Penthouse Interior">
-                                <div class="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-all"></div>
+                            <div class="overflow-hidden relative h-[450px]">
+                                <img src="6.jpg" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" alt="Presidential Penthouse">
                             </div>
                             <div class="mt-8 border-l border-gray-100 pl-6">
                                 <h3 class="text-2xl mb-3">Presidential Penthouse</h3>
-                                <p class="text-[11px] text-gray-400 uppercase tracking-widest mb-4">2,200 SQ FT • ROOFTOP DECK • PRIVATE CHEF</p>
+                                <p class="text-[11px] text-gray-400 uppercase tracking-widest mb-4">2,200 SQ FT • ROOFTOP DECK</p>
                                 <span class="text-sm gold-text font-semibold tracking-widest">FROM ₹90,000 / NIGHT</span>
+                            </div>
+                        </div>
+                        <!-- Additional Rows -->
+                        <div class="group cursor-pointer">
+                            <div class="overflow-hidden relative h-[450px]">
+                                <img src="10.webp" class="w-full h-full object-cover" alt="Heritage Suite">
+                            </div>
+                            <div class="mt-8 border-l border-gray-100 pl-6">
+                                <h3 class="text-2xl mb-3">Royal Heritage Suite</h3>
+                                <p class="text-[11px] text-gray-400 uppercase tracking-widest mb-4">1,200 SQ FT • HISTORIC WING</p>
+                                <span class="text-sm gold-text font-semibold tracking-widest">FROM ₹75,000 / NIGHT</span>
+                            </div>
+                        </div>
+                        <div class="group cursor-pointer">
+                            <div class="overflow-hidden relative h-[450px]">
+                                <img src="11.jpg" class="w-full h-full object-cover" alt="Garden Room">
+                            </div>
+                            <div class="mt-8 border-l border-gray-100 pl-6">
+                                <h3 class="text-2xl mb-3">Terrace Garden View</h3>
+                                <p class="text-[11px] text-gray-400 uppercase tracking-widest mb-4">600 SQ FT • PRIVATE BALCONY</p>
+                                <span class="text-sm gold-text font-semibold tracking-widest">FROM ₹48,000 / NIGHT</span>
+                            </div>
+                        </div>
+                        <div class="group cursor-pointer">
+                            <div class="overflow-hidden relative h-[450px]">
+                                <img src="9.webp" class="w-full h-full object-cover" alt="Club Suite">
+                            </div>
+                            <div class="mt-8 border-l border-gray-100 pl-6">
+                                <h3 class="text-2xl mb-3">Junior Club Suite</h3>
+                                <p class="text-[11px] text-gray-400 uppercase tracking-widest mb-4">550 SQ FT • LOUNGE ACCESS</p>
+                                <span class="text-sm gold-text font-semibold tracking-widest">FROM ₹42,000 / NIGHT</span>
                             </div>
                         </div>
                     </div>
@@ -307,7 +384,7 @@
                         <div class="order-2 md:order-1 h-[650px] relative">
                              <img src="7.avif" class="w-full h-full object-cover shadow-2xl" alt="Fine Dining Venue">
                              <div class="absolute -right-10 top-20 bg-black text-white p-8 hidden lg:block">
-                                <span class="block text-[10px] tracking-[0.4em] mb-2">RESERVATIONS</span>
+                                <span class="block text-[10px] tracking-[0.4em] mb-2">HOTLINE</span>
                                 <p class="text-sm font-light">+91-704 5390 01</p>
                              </div>
                         </div>
@@ -315,7 +392,7 @@
                             <span class="gold-text text-xs font-bold tracking-[0.4em] uppercase mb-6 block">Culinary Excellence</span>
                             <h2 class="text-5xl mb-8 leading-tight font-serif">The Gilded Fork</h2>
                             <p class="text-gray-500 leading-relaxed mb-8 italic text-lg">"A symphony of seasonal flavors and artistic presentation."</p>
-                            <p class="text-gray-500 mb-10 leading-relaxed text-sm">Under the direction of Michelin-starred Lucas Fernandes and Head Chef Paul Wilson, The Gilded Fork reimagines modern continental cuisine. From our signature tasting menus to our world-class wine cellar containing over 5,000 vintages, every moment is designed to delight the palate.</p>
+                            <p class="text-gray-500 mb-10 leading-relaxed text-sm">Under the direction of Michelin-starred Lucas Fernandes, The Gilded Fork reimagines modern continental cuisine. From our signature tasting menus to our world-class wine cellar, every moment is designed to delight.</p>
                             <div class="space-y-4 mb-10">
                                 <div class="flex items-center justify-between border-b border-gray-100 pb-2">
                                     <span class="text-xs font-bold tracking-widest uppercase">Breakfast</span>
@@ -327,46 +404,49 @@
                                 </div>
                                 <div class="flex items-center justify-between border-b border-gray-100 pb-2">
                                     <span class="text-xs font-bold tracking-widest uppercase">Dinner</span>
-                                    <span class="text-xs text-gray-400 uppercase">19:00 — 23:00</span>
+                                    <span class="text-xs text-gray-400 uppercase">19:00 — 23:30</span>
                                 </div>
                             </div>
-                            <button class="px-12 py-4 bg-black text-white text-[10px] tracking-[0.3em] font-bold uppercase hover:bg-[#c5a059] transition-all">Reserve Your Table</button>
+                            <button onclick="openDiningBooking()" class="px-12 py-4 bg-black text-white text-[10px] tracking-[0.3em] font-bold uppercase hover:bg-[#c5a059] transition-all">Reserve Your Table</button>
                         </div>
                     </div>
                 </section>
             `,
             amenities: `
                 <section class="pt-40 pb-32 px-6 max-w-7xl mx-auto page-transition">
-                    <div class="text-center mb-20">
+                    <div class="text-center mb-24">
                         <h2 class="text-5xl font-serif mb-6">Extraordinary Leisure</h2>
-                        <p class="text-gray-400 text-sm tracking-widest uppercase font-semibold">Curated experiences for the modern traveler</p>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                        <div class="group p-10 border border-gray-100 bg-white hover:bg-black hover:text-white transition-all duration-500 text-center">
-                            <i class="fa-solid fa-spa text-4xl gold-text mb-8 block"></i>
-                            <h4 class="text-xl mb-6 font-serif">Saphire Spa</h4>
-                            <p class="text-[13px] leading-relaxed opacity-70">Customized wellness treatments and hydrotherapy in a serene sanctuary.</p>
-                        </div>
-                        <div class="group p-10 border border-gray-100 bg-white hover:bg-black hover:text-white transition-all duration-500 text-center">
-                            <i class="fa-solid fa-water-ladder text-4xl gold-text mb-8 block"></i>
-                            <h4 class="text-xl mb-6 font-serif">Rooftop Pool</h4>
-                            <p class="text-[13px] leading-relaxed opacity-70">A heated infinity pool with a climate-controlled terrace and bar service.</p>
-                        </div>
-                        <div class="group p-10 border border-gray-100 bg-white hover:bg-black hover:text-white transition-all duration-500 text-center">
-                            <i class="fa-solid fa-dumbbell text-4xl gold-text mb-8 block"></i>
-                            <h4 class="text-xl mb-6 font-serif">The Studio</h4>
-                            <p class="text-[13px] leading-relaxed opacity-70">24-hour fitness center featuring Technogym equipment and yoga sessions.</p>
-                        </div>
-                        <div class="group p-10 border border-gray-100 bg-white hover:bg-black hover:text-white transition-all duration-500 text-center">
-                            <i class="fa-solid fa-car-side text-4xl gold-text mb-8 block"></i>
-                            <h4 class="text-xl mb-6 font-serif">Chauffeur</h4>
-                            <p class="text-[13px] leading-relaxed opacity-70">Complimentary house car service within a 5-mile radius of the hotel.</p>
+
+                    <div class="mb-40">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                            <div>
+                                <span class="gold-text text-xs font-bold tracking-[0.4em] uppercase mb-6 block">Wellness</span>
+                                <h3 class="text-4xl font-serif mb-8">Saphire Spa</h3>
+                                <p class="text-gray-500 leading-relaxed mb-8">A curated journey of rejuvenation using hand-harvested ingredients to restore body and spirit.</p>
+                                <button class="text-[10px] font-bold border-b border-black pb-2 tracking-[0.2em] hover:text-gold uppercase">View Spa Menu</button>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <img src="12.jpg" class="w-full h-full object-cover row-span-2 rounded-sm" alt="Spa Room">
+                                <img src="13.jpg" class="w-full h-48 object-cover rounded-sm" alt="Pool">
+                                <img src="14.jpg" class="w-full h-48 object-cover rounded-sm" alt="Lounge">
+                            </div>
                         </div>
                     </div>
-                    <div class="mt-20 relative h-[450px] overflow-hidden">
-                        <img src="8.webp" class="w-full h-full object-cover" alt="Spa and Wellness Center">
-                        <div class="absolute inset-0 bg-black/30 flex items-center justify-center">
-                             <button class="bg-white/10 backdrop-blur-md text-white border border-white/30 px-10 py-4 text-[10px] tracking-[0.3em] font-bold uppercase hover:bg-white hover:text-black transition-all">View Full Gallery</button>
+
+                    <div class="mb-40">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                            <div class="lg:order-2">
+                                <span class="gold-text text-xs font-bold tracking-[0.4em] uppercase mb-6 block">Skyline</span>
+                                <h3 class="text-4xl font-serif mb-8">Rooftop Infinity Pool</h3>
+                                <p class="text-gray-500 leading-relaxed mb-8">Panoramic views and climate-controlled waters for the ultimate relaxation.</p>
+                                <button class="text-[10px] font-bold border-b border-black pb-2 tracking-[0.2em] hover:text-gold uppercase">Explore Sky Deck</button>
+                            </div>
+                            <div class="lg:order-1 grid grid-cols-12 gap-4">
+                                <img src="15.webp" class="col-span-12 h-64 w-full object-cover rounded-sm" alt="Pool View">
+                                <img src="16.avif" class="col-span-6 h-56 w-full object-cover rounded-sm" alt="Cabana">
+                                <img src="17.jpg" class="col-span-6 h-56 w-full object-cover rounded-sm" alt="Cocktails">
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -376,67 +456,30 @@
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-20">
                         <div>
                             <h2 class="text-5xl font-serif mb-8">Connect With Us</h2>
-                            <p class="text-gray-500 mb-12 leading-relaxed text-sm">Whether you have a question about our suites, need assistance with travel arrangements, or wish to organize a special event, our concierge team is available 24/7.</p>
-                            
+                            <p class="text-gray-500 mb-12 text-sm">Our concierge team is available 24/7 for any inquiries.</p>
                             <div class="space-y-10">
                                 <div class="flex gap-6">
-                                    <div class="w-12 h-12 gold-bg flex items-center justify-center text-white text-xl">
-                                        <i class="fa-solid fa-location-dot"></i>
-                                    </div>
-                                    <div>
-                                        <h5 class="text-xs font-bold uppercase tracking-widest mb-1">Our Location</h5>
-                                        <p class="text-sm text-gray-500">45 Charabra, Kufri, SHIMLA 171012</p>
-                                    </div>
-                                </div>
-                                <div class="flex gap-6">
-                                    <div class="w-12 h-12 gold-bg flex items-center justify-center text-white text-xl">
-                                        <i class="fa-solid fa-phone"></i>
-                                    </div>
-                                    <div>
-                                        <h5 class="text-xs font-bold uppercase tracking-widest mb-1">Inquiries</h5>
-                                        <p class="text-sm text-gray-500">+91-708 1934 797</p>
-                                    </div>
+                                    <div class="w-12 h-12 gold-bg flex items-center justify-center text-white"><i class="fa-solid fa-location-dot"></i></div>
+                                    <div><h5 class="text-xs font-bold uppercase mb-1">Our Location</h5><p class="text-sm text-gray-500">45 Charabra, Kufri, SHIMLA</p></div>
                                 </div>
                             </div>
                         </div>
-                        <form class="bg-white p-12 shadow-sm border border-gray-50 space-y-8">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <div class="flex flex-col border-b border-gray-100 pb-2">
-                                    <label class="text-[10px] uppercase font-bold tracking-widest mb-2 text-gray-400">Your Name</label>
-                                    <input type="text" class="outline-none py-1 text-sm bg-transparent" placeholder="John Doe">
-                                </div>
-                                <div class="flex flex-col border-b border-gray-100 pb-2">
-                                    <label class="text-[10px] uppercase font-bold tracking-widest mb-2 text-gray-400">Email Address</label>
-                                    <input type="email" class="outline-none py-1 text-sm bg-transparent" placeholder="email@domain.com">
-                                </div>
-                            </div>
-                            <div class="flex flex-col border-b border-gray-100 pb-2">
-                                <label class="text-[10px] uppercase font-bold tracking-widest mb-2 text-gray-400">Subject</label>
-                                <select class="outline-none py-1 text-sm bg-transparent">
-                                    <option>General Inquiry</option>
-                                    <option>Room Reservation</option>
-                                    <option>Dining Reservation</option>
-                                    <option>Events & Weddings</option>
-                                </select>
-                            </div>
-                            <div class="flex flex-col border-b border-gray-100 pb-2">
-                                <label class="text-[10px] uppercase font-bold tracking-widest mb-2 text-gray-400">Your Message</label>
-                                <textarea rows="4" class="outline-none py-1 text-sm bg-transparent resize-none" placeholder="Tell us how we can help..."></textarea>
-                            </div>
-                            <button type="submit" class="w-full bg-black text-white py-5 font-bold tracking-[0.3em] hover:bg-gold transition-all uppercase text-[10px]">Send Message</button>
+                        <form class="bg-white p-12 border border-gray-100 space-y-8">
+                            <input type="text" placeholder="Your Name" class="w-full border-b border-gray-100 py-4 outline-none text-sm">
+                            <input type="email" placeholder="Email Address" class="w-full border-b border-gray-100 py-4 outline-none text-sm">
+                            <button class="w-full bg-black text-white py-5 font-bold uppercase text-[10px] tracking-widest">Send Message</button>
                         </form>
                     </div>
                 </section>
             `
         };
 
-        // Navigation Management
+        // Navigation
         function showPage(pageId) {
             const root = document.getElementById('content-root');
             root.innerHTML = pages[pageId] || pages.home;
             window.scrollTo({ top: 0, behavior: 'smooth' });
             
-            // Link state updates
             document.querySelectorAll('.nav-link').forEach(link => {
                 const linkText = link.innerText.toLowerCase();
                 if(linkText.includes(pageId) || (pageId === 'home' && linkText === 'home')) {
@@ -447,31 +490,35 @@
             });
         }
 
-        // UI Controls
-        const mobileMenu = document.getElementById('mobileMenu');
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-
-        function toggleMobileMenu() {
-            mobileMenu.classList.toggle('translate-x-full');
-            mobileMenu.classList.toggle('translate-x-0');
-        }
-
-        mobileMenuBtn.addEventListener('click', toggleMobileMenu);
-
+        // Room Booking
         const bookingModal = document.getElementById('bookingModal');
-        
         function openBooking() {
             bookingModal.style.display = 'block';
             document.body.style.overflow = 'hidden';
         }
-
         function closeBooking() {
             bookingModal.style.display = 'none';
             document.body.style.overflow = 'auto';
             document.getElementById('bookingMessage').classList.add('hidden');
         }
 
-        window.onclick = (e) => { if (e.target == bookingModal) closeBooking(); }
+        // Dining Booking (New)
+        const diningModal = document.getElementById('diningModal');
+        function openDiningBooking() {
+            diningModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        function closeDiningBooking() {
+            diningModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            document.getElementById('diningMessage').classList.add('hidden');
+        }
+
+        // Shared Logic
+        window.onclick = (e) => { 
+            if (e.target == bookingModal) closeBooking(); 
+            if (e.target == diningModal) closeDiningBooking(); 
+        }
 
         document.getElementById('bookingForm').onsubmit = (e) => {
             e.preventDefault();
@@ -479,7 +526,21 @@
             setTimeout(closeBooking, 2500);
         }
 
-        // Launch
+        document.getElementById('diningForm').onsubmit = (e) => {
+            e.preventDefault();
+            document.getElementById('diningMessage').classList.remove('hidden');
+            setTimeout(closeDiningBooking, 2500);
+        }
+
+        // Mobile Menu
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        function toggleMobileMenu() {
+            mobileMenu.classList.toggle('translate-x-full');
+            mobileMenu.classList.toggle('translate-x-0');
+        }
+        mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+
         window.onload = () => showPage('home');
     </script>
 </body>
